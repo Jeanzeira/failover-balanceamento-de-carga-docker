@@ -1,0 +1,79 @@
+version: '3.1'
+
+networks:
+  minha_rede:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+services:
+  postgres-master:
+    image: bitnami/postgresql
+    environment:
+      #POSTGRES_PASSWORD: bda123
+       - POSTGRESQL_REPLICATION_MODE=master
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_USERNAME=postgres
+       - POSTGRESQL_PASSWORD=bd123
+       - POSTGRESQL_DATABASE=master
+    volumes:
+      - ./data/master:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.22
+    ports:
+      - "5440:5432"
+  postgres-slave:
+    image: bitnami/postgresql
+    environment:
+      #POSTGRES_PASSWORD: bda123
+       - POSTGRESQL_REPLICATION_MODE=slave
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_MASTER_HOST=postgres-master
+       - POSTGRESQL_PASSWORD=123456
+       - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.23
+    ports:
+      - "5441:5432"
+    depends_on:
+      - postgres-master
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "80:80"
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.24
+    volumes:
+      - ./data/pgadmin_data:/var/lib/pgadmin
+  haproxy:
+    image: haproxy
+    volumes:
+      - ./data/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "3001:3001"
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.25
+  app:
+    container_name: app-dev
+    image: app-dev
+    build:
+      target: development
+    volumes:
+      - ./data/src:/data/src
+      - ./data/public:/data/public
+    ports:
+      - 3000:3000
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.26
