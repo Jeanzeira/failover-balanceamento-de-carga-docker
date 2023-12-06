@@ -21,6 +21,7 @@ query = """
         ORDER BY id asc;
 """
 
+
 # Executar o comando SQL
 cur.execute(query)
 
