@@ -10,7 +10,6 @@ services:
   postgres-master:
     image: bitnami/postgresql
     environment:
-      #POSTGRES_PASSWORD: bda123
        - POSTGRESQL_REPLICATION_MODE=master
        - POSTGRESQL_REPLICATION_USER=userbackup
        - POSTGRESQL_REPLICATION_PASSWORD=123456
@@ -24,10 +23,9 @@ services:
         ipv4_address: 172.20.0.22
     ports:
       - "5440:5432"
-  postgres-slave:
+  postgres-slave0:
     image: bitnami/postgresql
-    environment:
-      #POSTGRES_PASSWORD: bda123
+    environment:     
        - POSTGRESQL_REPLICATION_MODE=slave
        - POSTGRESQL_REPLICATION_USER=userbackup
        - POSTGRESQL_REPLICATION_PASSWORD=123456
@@ -43,6 +41,42 @@ services:
       - "5441:5432"
     depends_on:
       - postgres-master
+  postgres-slave1:
+    image: bitnami/postgresql
+    environment:
+       - POSTGRESQL_REPLICATION_MODE=slave
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_MASTER_HOST=postgres-master
+       - POSTGRESQL_PASSWORD=123456
+       - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.24
+    ports:
+      - "5442:5432"
+    depends_on:
+      - postgres-master      
+  postgres-slave2:
+    image: bitnami/postgresql
+    environment:
+       - POSTGRESQL_REPLICATION_MODE=slave
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_MASTER_HOST=postgres-master
+       - POSTGRESQL_PASSWORD=123456
+       - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.25
+    ports:
+      - "5443:5432"
+    depends_on:
+      - postgres-master      
   pgadmin:
     image: dpage/pgadmin4
     environment:
@@ -52,7 +86,7 @@ services:
       - "80:80"
     networks:
       minha_rede:
-        ipv4_address: 172.20.0.24
+        ipv4_address: 172.20.0.26
     volumes:
       - ./data/pgadmin_data:/var/lib/pgadmin
   haproxy:
@@ -60,20 +94,9 @@ services:
     volumes:
       - ./data/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
-      - "3001:3001"
+      - "5450:5432"
+      - "3002:8404"
     networks:
       minha_rede:
-        ipv4_address: 172.20.0.25
-  app:
-    container_name: app-dev
-    image: app-dev
-    build:
-      target: development
-    volumes:
-      - ./data/src:/data/src
-      - ./data/public:/data/public
-    ports:
-      - 3000:3000
-    networks:
-      minha_rede:
-        ipv4_address: 172.20.0.26
+        ipv4_address: 172.20.0.27
+  
