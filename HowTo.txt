@@ -7,7 +7,7 @@ Criação da estrutura do projeto
 
     Crie uma pasta com o nome que deseja, no local desejado.
 
-    Dentro da pasta root, crie o arquivo docker-compose.yml com o conteúdo que você forneceu.
+    Dentro da pasta root, crie o arquivo docker-compose.yml com o conteúdo e insira o script do arquivo fornecido.
 
 Iniciar os containers no Docker
 
