@@ -1,0 +1,46 @@
+Para realizar todas essas tarefas, siga estes passos detalhados:
+Instalação do Docker
+
+    Baixe e instale o Docker no servidor conforme as instruções fornecidas no site oficial do Docker.
+
+Criação da estrutura do projeto
+
+    Crie uma pasta com o nome que deseja, no local desejado.
+
+    Dentro da pasta root, crie o arquivo docker-compose.yml com o conteúdo que você forneceu.
+
+Iniciar os containers no Docker
+
+    Abra um terminal ou prompt de comando e navegue até o diretório onde está o arquivo docker-compose.yml.
+
+    Execute o seguinte comando para iniciar os containers usando o Docker Compose:
+
+    docker-compose up -d
+
+Registrar bancos no pgAdmin para monitoramento
+
+    Abra o navegador e acesse o pgAdmin no endereço http://localhost:80 (ou o endereço correspondente se estiver utilizando outro IP ou porta).
+
+    Faça login usando o email admin@admin.com e a senha root.
+
+    No painel do pgAdmin, adicione os servidores PostgreSQL postgres-master, postgres-slave0, postgres-slave1 e postgres-slave2 para monitoramento.
+
+Configurar o HAProxy
+
+    Edite o arquivo haproxy.cfg localizado na pasta data para incluir os IPs e portas dos bancos no backend e habilitar a função listen stats para o monitoramento.
+
+Testar conexão com o HAProxy
+
+    Execute o script testehaproxy.py para testar a conexão com o HAProxy. Em caso de falha, verifique o log para diagnosticar o problema.
+
+Executar scripts SQL
+
+    Execute o script bancocreate.py para criar a tabela no banco de dados.
+
+    Execute o script bancoinsert.py para inserir os dados na tabela.
+
+Operações no banco de dados
+
+    Após a inserção dos dados, você pode executar os scripts bancoselect.py para listar os dados das tabelas e seus respectivos IPs, bancoupdate.py para alterar dados na tabela e bancodelete.py para deletar dados.
+
+Lembre-se de adaptar os scripts de acordo com as necessidades do seu banco de dados e ambiente específico, e verifique os logs e mensagens de erro caso ocorram problemas durante a execução dos passos acima.
