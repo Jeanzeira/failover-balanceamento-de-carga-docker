@@ -13,8 +13,11 @@ try:
     # Abrir um cursor para executar comandos SQL
     cur = conn.cursor()
 
+    print('Digite qual email você quer excluir [lembre de adicionar o %]:')
+    mensagem = input(str())
+
     # Comando SQL para deletar dados de uma tabela
-    query = "DELETE FROM usuarios WHERE email like '%.com'"
+    query = f"DELETE FROM usuarios WHERE email ilike '{mensagem}'"
 
     # Executar o comando SQL
     cur.execute(query)

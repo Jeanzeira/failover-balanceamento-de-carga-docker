@@ -32,17 +32,10 @@ def adicionar_dados(nome, idade, email):
 
 fake = Faker()
 
-for _ in range(10):
+for _ in range(100):
     nome = fake.name()
     idade = fake.random_int(min=18, max=80)
     email = fake.email()
     print(nome, idade, email)
 
     adicionar_dados(nome, idade, email)
-
-    #criar tabela no postgres
-    #CREATE TABLE usuarios (
-    #id SERIAL PRIMARY KEY,
-    #nome VARCHAR(100),
-    #idade INTEGER,
-    #email VARCHAR(100));

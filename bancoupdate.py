@@ -13,8 +13,11 @@ try:
     # Abrir um cursor para executar comandos SQL
     cur = conn.cursor()
 
+    print('Informe para a idede:')
+    idade = input(str())
+
     # Comando SQL para atualizar dados na tabela
-    query = "UPDATE usuarios SET idade = 10 WHERE idade <=50;"
+    query = f"UPDATE usuarios SET idade = {idade} WHERE idade >= 50;"
 
     # Executar o comando SQL
     cur.execute(query)
