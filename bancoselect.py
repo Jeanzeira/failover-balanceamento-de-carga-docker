@@ -14,13 +14,16 @@ cur = conn.cursor()
 
 # Comando SQL com o subselect para unir os resultados
 query = """
-    SELECT *,
-        (SELECT inet_server_addr()) AS server_address,
-        (SELECT inet_server_port()) AS server_port
-        FROM usuarios
-        ORDER BY id asc;
+    SELECT u.id, u.nome, u.idade, u.email, u.telefone,
+           e.rua, e.cidade, e.estado, e.cep,
+           TO_CHAR(u.data_criacao, 'DD-MM-YYYY HH24:MI:SS') AS data_criacao_formatada,
+           (SELECT COUNT(*) FROM usuarios) AS total_usuarios,
+           (SELECT inet_server_addr()) AS server_address,
+           (SELECT inet_server_port()) AS server_port
+    FROM usuarios u
+    INNER JOIN enderecos e ON u.endereco_id = e.id
+    ORDER BY u.id ASC;
 """
-
 
 # Executar o comando SQL
 cur.execute(query)

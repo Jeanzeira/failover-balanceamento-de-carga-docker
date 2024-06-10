@@ -99,21 +99,3 @@ services:
     networks:
       minha_rede:
         ipv4_address: 172.20.0.27
-  repmgr:
-    image: bitnami/postgresql-repmgr:15.3.0-debian-11-r8
-    depends_on:
-      - postgres-master
-      - postgres-slave0
-    volumes:
-      - ./data/repmgr:/var/lib/repmgr
-    environment:
-      - REPMGR_NODE_NAME=repmgr-node
-      - REPMGR_NODE_NETWORK_NAME=repmgr
-      - REPMGR_PRIMARY_HOST=postgres-master
-      - REPMGR_PRIMARY_PORT=5432
-      - REPMGR_PRIMARY_USER=repmgr
-      - REPMGR_PRIMARY_PASSWORD=repmgrpass
-      - REPMGR_USE_REPLICATION_SLOTS=true    
-    networks:
-      minha_rede:
-        ipv4_address: 172.20.0.28
