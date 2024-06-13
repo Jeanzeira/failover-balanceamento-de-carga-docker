@@ -13,16 +13,18 @@ try:
         # Abrir um cursor para executar comandos SQL
         with conn.cursor() as cur:
 
-            # Comando SQL para excluir a tabela se ela existir
-            drop_query = "DROP TABLE IF EXISTS usuarios CASCADE"
+            # Comando SQL para excluir a tabela 'usuarios' se ela existir
+            drop_usuarios_query = "DROP TABLE IF EXISTS usuarios CASCADE"
+            cur.execute(drop_usuarios_query)
 
-            # Executar o comando SQL
-            cur.execute(drop_query)
+            # Comando SQL para excluir a tabela 'enderecos' se ela existir
+            drop_enderecos_query = "DROP TABLE IF EXISTS enderecos CASCADE"
+            cur.execute(drop_enderecos_query)
 
-            # Commit da transação para efetivar a exclusão da tabela
+            # Commit da transação para efetivar a exclusão das tabelas
             conn.commit()
 
-        print("Tabela 'usuarios' excluída com sucesso!")
+        print("Tabelas 'usuarios' e 'enderecos' excluídas com sucesso!")
 
 except (psycopg2.Error, psycopg2.DatabaseError) as e:
-    print("Erro ao excluir a tabela 'usuarios':", e)
+    print("Erro ao excluir as tabelas 'usuarios' e 'enderecos':", e)

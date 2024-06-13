@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import Error
 from faker import Faker
 
-fake = Faker()
+fake = Faker('pt_BR')
 
 def adicionar_endereco(rua, cidade, estado, cep):
     try:
@@ -63,7 +63,7 @@ def adicionar_usuario(nome, idade, email, telefone, endereco_id):
             conexao.close()
 
 # Gerar e adicionar dados de exemplo
-for _ in range(10):  # Ajustado para 10 inserções para teste, mude para 100 se necessário
+for _ in range(50000):  # Ajustado inserções para teste
     nome = fake.name()
     idade = fake.random_int(min=18, max=80)
     email = fake.email()

@@ -10,6 +10,7 @@ class LoadBalancer:
         self.request_queue = queue.Queue()
         self.current_server = 0
         self.lock = threading.Lock()
+        self.start_time = None
         
     def get_next_server(self):
         with self.lock:
@@ -39,16 +40,19 @@ class LoadBalancer:
                 conn.close()
 
     def start(self):
+        self.start_time = time.time()
         while True:
             request = self.request_queue.get()
             if request is None:
                 break
             self.handle_request(request)
+        end_time = time.time()
+        print(f"Tempo total de execução: {end_time - self.start_time} segundos")
 
     def add_request(self, request):
         self.request_queue.put(request)
 
-# Função que retorna o SELECT complexo
+# Função que retorna o SELECT
 def get_complex_select():
     return """
         SELECT u.id, u.nome, u.idade, u.email, u.telefone,
