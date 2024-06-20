@@ -32,7 +32,8 @@ class LoadBalancer:
             cursor = conn.cursor()
             cursor.execute(request)
             rows = cursor.fetchall()
-            print(f"Resultado da requisição no servidor {server['host']}:{server['port']}: {rows}")
+            formatted_rows = "\n".join([str(row) for row in rows])
+            print(f"Resultado da requisição no servidor {server['host']}:{server['port']}:\n{formatted_rows}")
         except Exception as e:
             print(f"Erro ao processar a requisição no servidor {server['host']}:{server['port']}: {e}")
         finally:
@@ -52,9 +53,9 @@ class LoadBalancer:
     def add_request(self, request):
         self.request_queue.put(request)
 
-# Função que retorna o SELECT
-def get_complex_select():
-    return """
+# Função que retorna o SELECT particionado por ID
+def get_partitioned_select(id_start, id_end):
+    return f"""
         SELECT u.id, u.nome, u.idade, u.email, u.telefone,
                e.rua, e.cidade, e.estado, e.cep,
                TO_CHAR(u.data_criacao, 'DD-MM-YYYY HH24:MI:SS') AS data_criacao_formatada,
@@ -63,6 +64,7 @@ def get_complex_select():
                (SELECT inet_server_port()) AS server_port
         FROM usuarios u
         INNER JOIN enderecos e ON u.endereco_id = e.id
+        WHERE u.id BETWEEN {id_start} AND {id_end}
         ORDER BY u.id ASC;
     """
 
@@ -74,13 +76,21 @@ servers = [
     {"host": "localhost", "port": 5443, "dbname": "master", "user": "postgres", "password": "bd123"}   # Slave 2
 ]
 
+# Definir os intervalos de IDs para as consultas
+id_ranges = [
+    (1, 159466),  # Intervalo para o primeiro servidor
+    (159467, 318932),  # Intervalo para o segundo servidor
+    (318933, 478398),  # Intervalo para o terceiro servidor
+    (478399, 637864)  # Intervalo para o quarto servidor
+]
+
 # Criar e iniciar o balanceador de carga
 load_balancer = LoadBalancer(servers)
 threading.Thread(target=load_balancer.start).start()
 
-# Simular a adição de requisições de SELECT
-for i in range(10):
-    load_balancer.add_request(get_complex_select())
+# Adicionar requisições de SELECT particionadas
+for id_start, id_end in id_ranges:
+    load_balancer.add_request(get_partitioned_select(id_start, id_end))
     time.sleep(random.uniform(0.1, 1.0))
 
 # Enviar um sinal de parada
