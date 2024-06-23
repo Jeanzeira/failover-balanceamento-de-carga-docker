@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import Error
 from faker import Faker
 
-fake = Faker()
+fake = Faker('pt_BR')
 
 def adicionar_endereco(rua, cidade, estado, cep):
     try:
@@ -62,18 +62,25 @@ def adicionar_usuario(nome, idade, email, telefone, endereco_id):
             cursor.close()
             conexao.close()
 
-# Gerar e adicionar dados de exemplo
-for _ in range(10000):  # Ajustado inserções para teste
-    nome = fake.name()
-    idade = fake.random_int(min=18, max=80)
-    email = fake.email()
-    telefone = fake.phone_number()[:15]  # Truncar telefone para no máximo 15 caracteres
-    rua = fake.street_address()
-    cidade = fake.city()
-    estado = fake.state()
-    cep = fake.postcode()
+def gerar_dados(num_registros):
+    for i in range(1, num_registros + 1):
+        nome = fake.name()
+        idade = fake.random_int(min=18, max=80)
+        
+        # Gerar e-mail com endereços de usuário sequenciais
+        email = f"usuario{i}@yahoo.com"
+        
+        telefone = fake.phone_number()[:15]  # Truncar telefone para no máximo 15 caracteres
+        rua = fake.street_address()
+        cidade = fake.city()
+        estado = fake.state()
+        cep = fake.postcode()
 
-    endereco_id = adicionar_endereco(rua, cidade, estado, cep)
+        endereco_id = adicionar_endereco(rua, cidade, estado, cep)
 
-    if endereco_id:
-        adicionar_usuario(nome, idade, email, telefone, endereco_id)
+        if endereco_id:
+            adicionar_usuario(nome, idade, email, telefone, endereco_id)
+
+if __name__ == '__main__':
+    num_registros = int(input("Digite o número de registros que deseja inserir: "))
+    gerar_dados(num_registros)

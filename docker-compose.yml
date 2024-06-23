@@ -76,7 +76,79 @@ services:
     ports:
       - "5443:5432"
     depends_on:
-      - postgres-master      
+      - postgres-master
+  postgres-slave3:
+    image: bitnami/postgresql
+    environment:
+       - POSTGRESQL_REPLICATION_MODE=slave
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_MASTER_HOST=postgres-master
+       - POSTGRESQL_PASSWORD=123456
+       - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.33
+    ports:
+      - "5444:5432"
+    depends_on:
+      - postgres-master
+  postgres-slave4:
+    image: bitnami/postgresql
+    environment:
+       - POSTGRESQL_REPLICATION_MODE=slave
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_MASTER_HOST=postgres-master
+       - POSTGRESQL_PASSWORD=123456
+       - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.28
+    ports:
+      - "5445:5432"
+    depends_on:
+      - postgres-master 
+  postgres-slave5:
+    image: bitnami/postgresql
+    environment:
+       - POSTGRESQL_REPLICATION_MODE=slave
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_MASTER_HOST=postgres-master
+       - POSTGRESQL_PASSWORD=123456
+       - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.29
+    ports:
+      - "5446:5432"
+    depends_on:
+      - postgres-master 
+  postgres-slave6:
+    image: bitnami/postgresql
+    environment:
+       - POSTGRESQL_REPLICATION_MODE=slave
+       - POSTGRESQL_REPLICATION_USER=userbackup
+       - POSTGRESQL_REPLICATION_PASSWORD=123456
+       - POSTGRESQL_MASTER_HOST=postgres-master
+       - POSTGRESQL_PASSWORD=123456
+       - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    networks:
+      minha_rede:
+        ipv4_address: 172.20.0.30
+    ports:
+      - "5447:5432"
+    depends_on:
+      - postgres-master                        
   pgadmin:
     image: dpage/pgadmin4
     environment:
@@ -88,7 +160,7 @@ services:
       minha_rede:
         ipv4_address: 172.20.0.26
     volumes:
-      - ./data/pgadmin_data:/var/lib/pgadmin
+      - ./data/pgadmin_data:/var/lib/pgadmin1
   haproxy:
     image: haproxy
     volumes:
@@ -98,4 +170,4 @@ services:
       - "3002:8404"
     networks:
       minha_rede:
-        ipv4_address: 172.20.0.27
+        ipv4_address: 172.20.0.32

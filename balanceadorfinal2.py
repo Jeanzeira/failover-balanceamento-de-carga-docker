@@ -31,25 +31,25 @@ def execute_query(id_start, id_end, port):
         cursor.execute(get_partitioned_select(id_start, id_end))
         rows = cursor.fetchall()
         formatted_rows = "\n".join([str(row) for row in rows])
-        print(f"Resultado da requisição no servidor {server['host']}:{server['port']}:\n{formatted_rows}")
+        print(f"Resultado da requisição no servidor {server['host']}:{server['port']}:\n{formatted_rows}\n")
     except Exception as e:
-        print(f"Erro ao processar a requisição no servidor {server['host']}:{server['port']}: {e}")
+        print(f"Erro ao processar a requisição no servidor {server['host']}:{server['port']}: {e}\n")
     finally:
         if conn:
             conn.close()
 
 def execute_queries_serial():
-    intervals = [(1, 159473), (159474, 318947), (318948, 478421), (478422, 637894)]
-    port = [5440]
+    intervals = [(1, 1000000), (1000001, 2000000)]
+    port = 5440
     start_time = time.time()
-    for (id_start, id_end), port in zip(intervals, port):
+    for id_start, id_end in intervals:
         execute_query(id_start, id_end, port)
     end_time = time.time()
-    print(f"Tempo de execução serial: {end_time - start_time} segundos")
+    print(f"Tempo de execução serial: {end_time - start_time} segundos\n")
 
 def execute_queries_parallel():
-    intervals = [(1, 159473), (159474, 318947), (318948, 478421), (478422, 637894)]
-    ports = [5440, 5441, 5442, 5443]
+    intervals = [(1, 1000000), (1000001, 2000000)]
+    ports = [5440, 5441]
     start_time = time.time()
     processes = []
     for (id_start, id_end), port in zip(intervals, ports):
@@ -59,11 +59,14 @@ def execute_queries_parallel():
     for p in processes:
         p.join()
     end_time = time.time()
-    print(f"Tempo de execução paralelo: {end_time - start_time} segundos")
+    print(f"Tempo de execução paralelo: {end_time - start_time} segundos\n")
 
 if __name__ == '__main__':
-    #seriall
+    # Serial
     execute_queries_serial()
     
-    #paralelo
+    # Pausa de 5 segundos
+    time.sleep(5)
+    
+    # Paralelo
     execute_queries_parallel()
